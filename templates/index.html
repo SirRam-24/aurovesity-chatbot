@@ -11,7 +11,13 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0f172a; /* Slate 900 */
+            /* Premium dark mesh gradient background */
+            background-color: #050505;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,0.2) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,0.2) 0, transparent 50%);
+            background-attachment: fixed;
             color: #f8fafc;
             margin: 0;
             height: 100vh;
@@ -21,22 +27,28 @@
             overflow: hidden;
         }
 
+        /* Glassmorphism Container */
         .chat-container {
             width: 100%;
             height: 100vh;
-            background-color: #1e293b; /* Slate 800 */
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
 
         .chat-header {
             padding: 1.25rem;
-            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             align-items: center;
             gap: 1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
 
         .messages-area {
@@ -46,48 +58,88 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            scroll-behavior: smooth;
         }
 
+        /* Elegant thin scrollbar */
         .messages-area::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
         .messages-area::-webkit-scrollbar-track {
             background: transparent;
         }
         .messages-area::-webkit-scrollbar-thumb {
-            background: #475569;
-            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .messages-area::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .input-area {
             padding: 1.5rem;
-            background-color: #1e293b;
-            border-top: 1px solid #334155;
+            background: rgba(15, 23, 42, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
         }
 
         .message-bubble {
             max-width: 80%;
             padding: 1rem 1.25rem;
-            border-radius: 1rem;
+            border-radius: 1.25rem;
             line-height: 1.5;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .msg-user {
-            background-color: #3b82f6;
+            /* Glassy Blue Gradient */
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(37, 99, 235, 0.6));
             color: white;
             align-self: flex-end;
             border-bottom-right-radius: 0.25rem;
+            border: 1px solid rgba(96, 165, 250, 0.3);
         }
 
         .msg-bot {
-            background-color: #334155;
+            /* Glassy Dark */
+            background: rgba(255, 255, 255, 0.05);
             color: #f1f5f9;
             align-self: flex-start;
             border-bottom-left-radius: 0.25rem;
         }
 
         .prose-invert pre {
-            background-color: #0f172a;
+            background-color: rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Glassy Input */
+        #chatInput {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        #chatInput:focus {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(96, 165, 250, 0.5);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        
+        /* Glassy Button */
+        #sendBtn {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(139, 92, 246, 0.8));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            transition: all 0.2s ease;
+        }
+        #sendBtn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 1), rgba(139, 92, 246, 1));
         }
     </style>
 </head>
@@ -108,8 +160,8 @@
 
         <div id="chatBox" class="messages-area">
             <div class="flex items-start gap-3">
-                <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-robot text-blue-400"></i>
+                <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-lg border border-white/10" style="background: rgba(255,255,255,0.08); backdrop-filter: blur(5px);">
+                    <i class="fa-solid fa-robot text-blue-300"></i>
                 </div>
                 <div class="message-bubble msg-bot shadow-lg">
                     <div class="text-sm prose prose-sm prose-invert max-w-none">
@@ -122,8 +174,8 @@
         <div class="input-area">
             <form id="chatForm" class="relative flex items-center">
                 <input type="text" id="chatInput" autocomplete="off" placeholder="Type your message..." 
-                    class="w-full bg-slate-900 border border-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 rounded-xl pl-5 pr-14 py-4 text-white placeholder-slate-400 outline-none transition-all shadow-inner">
-                <button type="submit" id="sendBtn" class="absolute right-3 w-10 h-10 rounded-lg bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center transition-colors shadow-lg">
+                    class="w-full rounded-xl pl-5 pr-14 py-4 placeholder-white/50 outline-none shadow-inner">
+                <button type="submit" id="sendBtn" class="absolute right-3 w-10 h-10 rounded-lg text-white flex items-center justify-center shadow-lg">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </form>
@@ -241,8 +293,8 @@
             div.className = `flex items-start gap-3 ${sender === 'user' ? 'flex-row-reverse' : ''}`;
             
             const avatar = sender === 'user' 
-                ? `<div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center shrink-0 shadow-lg"><i class="fa-solid fa-user text-white"></i></div>`
-                : `<div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center shrink-0 shadow-lg"><i class="fa-solid fa-robot text-blue-400"></i></div>`;
+                ? `<div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-lg border border-white/20" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(139, 92, 246, 0.8)); backdrop-filter: blur(5px);"><i class="fa-solid fa-user text-white"></i></div>`
+                : `<div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-lg border border-white/10" style="background: rgba(255,255,255,0.08); backdrop-filter: blur(5px);"><i class="fa-solid fa-robot text-blue-300"></i></div>`;
             
             const bubbleClass = sender === 'user' ? 'msg-user shadow-md' : 'msg-bot shadow-lg';
 
